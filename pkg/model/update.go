@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/rmpalgo/fallout-termlink/pkg/game"
 )
@@ -10,7 +9,6 @@ import (
 // Update handles incoming events such as key presses and updates
 // the model accordingly.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-
 	switch m.GameState.Current {
 	case game.Main:
 		switch msg := msg.(type) {
@@ -39,21 +37,22 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Enter and space press is to enter the selection where the
 			// cursor is currently positioned.
 			case "enter", " ":
-				likeness := calculateLikeness(m.GameState.Choices[m.cursor], m.GameState.CorrectPassword)
-				m.GameState.Likeness = likeness
-
-				// checks if game mode word count equals to likeness count.
-				m.unlocked = m.GameState.WordCount == likeness
-				m.GameState.LikenessMsg = fmt.Sprintf("Likeness: %d", m.GameState.Likeness)
-
-				// If not unlocked then check if there are more than one attempt left.
-				// Otherwise lock the game.
-				if m.unlocked {
+				if m.GameState.Choices[m.cursor] == m.GameState.CorrectPassword {
 					m.GameState.Current = game.Unlocked
-				} else if m.GameState.Attempts > 1 {
-					m.GameState.Attempts--
 				} else {
-					m.GameState.Current = game.Locked
+					likeness := calculateLikeness(m.GameState.Choices[m.cursor], m.GameState.CorrectPassword)
+					m.GameState.Likeness = likeness
+
+					// checks if game mode word count equals to likeness count.
+					m.GameState.LikenessMsg = fmt.Sprintf("Likeness: %d", m.GameState.Likeness)
+
+					// If not unlocked then check if there are more than one attempt left.
+					// Otherwise lock the game.
+					if m.GameState.Attempts > 1 {
+						m.GameState.Attempts--
+					} else {
+						m.GameState.Current = game.Locked
+					}
 				}
 			}
 		}
