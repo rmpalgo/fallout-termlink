@@ -20,7 +20,7 @@ var rootCmd = &cobra.Command{
 termlink -v`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cfg.Version {
-			fmt.Printf("Termlink Version: %s", "1.0.0")
+			fmt.Printf("Termlink Version: %s\n", "1.0.0")
 			return
 		}
 

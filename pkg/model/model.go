@@ -2,21 +2,36 @@ package model
 
 import (
 	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
+)
+
+const (
+	regularModeWordCount = 4
+	hardModeWordCount    = 4
 )
 
 // Model the state of the game. Working with
 // the bubbletea example in their README.
 type Model struct {
-	choices  []string
-	cursor   int
-	selected map[int]struct{}
+	choices         []string
+	cursor          int
+	selected        string
+	likeness        int
+	likenessMsg     string
+	correctPassword string
+	unlocked        bool
+	wordCount       int
 }
 
 func InitialModel() *Model {
 	return &Model{
-		choices:  []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
-		selected: make(map[int]struct{}),
+		choices:         []string{"BROW", "GROW", "NOTE"},
+		selected:        "",
+		correctPassword: "GROW",
+		likeness:        0,
+		likenessMsg:     "",
+		wordCount:       regularModeWordCount,
 	}
 }
 
@@ -56,12 +71,10 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Enter and space press is to enter the selection where the
 		// cursor is currently positioned.
 		case "enter", " ":
-			_, ok := m.selected[m.cursor]
-			if ok {
-				delete(m.selected, m.cursor)
-			} else {
-				m.selected[m.cursor] = struct{}{}
-			}
+			likeness := calculateLikeness(m.choices[m.cursor], m.correctPassword)
+			m.likeness = likeness
+			m.unlocked = m.wordCount == likeness
+			m.likenessMsg = fmt.Sprintf("Likeness: %d", m.likeness)
 		}
 	}
 
@@ -73,31 +86,44 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View function that renders the UI based on the data model. Simply, this
 // is rendering strings.
 func (m *Model) View() string {
+	if m.unlocked {
+		return "For Overseer Eyes Only!\nClearance Granted\n"
+	}
 	// Writing the header
-	s := "What should we buy at the market?\n\n"
+	s := "Welcome to RobCo Industries Termlink.\nPassword Required.\n\n"
 
 	for i, choice := range m.choices {
-
 		// The cursor will point at the choice
 		cursor := " " // no cursor
 		if m.cursor == i {
 			cursor = ">" // the cursor!
 		}
 
-		// Has the choice been selected?
-		// this is when the user presses the key `enter` or `space`
-		checked := " " // no then leave blank
-		if _, ok := m.selected[i]; ok {
-			checked = "x" // yes, it is selected!
-		}
-
-		// Render the row for the to-do list example.
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
+		s += fmt.Sprintf("%s %s\n", cursor, choice)
+	}
+	s += "\n"
+	if m.likenessMsg != "" {
+		s += fmt.Sprintf("> %s", m.likenessMsg)
 	}
 
-	// The footer
 	s += "\nPress q to quit.\n"
 
 	// Send the UI for rendering
 	return s
+}
+
+func calculateLikeness(selectedWord, password string) int {
+	count := 0
+	minLen := len(password)
+	if len(selectedWord) != minLen {
+		return count
+	}
+
+	for i := 0; i < minLen; i++ {
+		if selectedWord[i] == password[i] {
+			count++
+		}
+	}
+
+	return count
 }
