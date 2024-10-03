@@ -5,8 +5,14 @@ import (
 	"github.com/rmpalgo/fallout-termlink/pkg/game"
 )
 
-// Model the state of the game. Working with
+// Model the state of the application. Working with
 // the bubbletea example in their README.
+// Bubbe Tea programs comprises a model that describes the
+// application state and three methods on that model.
+//
+// Init()   initial commands to run.
+// Update() handles incoming commands and updates the model state accordingly.
+// View()   rendering method for the TUI.
 type Model struct {
 	GameState *game.State
 	cursor    int

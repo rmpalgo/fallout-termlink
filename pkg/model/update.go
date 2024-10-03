@@ -50,7 +50,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// Otherwise lock the game.
 				if m.unlocked {
 					m.GameState.Current = game.Unlocked
-				} else if !m.unlocked && m.GameState.Attempts > 1 {
+				} else if m.GameState.Attempts > 1 {
 					m.GameState.Attempts--
 				} else {
 					m.GameState.Current = game.Locked
