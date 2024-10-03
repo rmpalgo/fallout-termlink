@@ -2,38 +2,20 @@ package model
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-)
-
-const (
-	regularModeWordCount = 4
-	hardModeWordCount    = 5
-
-	allowedAttempts = 4
+	"github.com/rmpalgo/fallout-termlink/pkg/game"
 )
 
 // Model the state of the game. Working with
 // the bubbletea example in their README.
 type Model struct {
-	choices         []string
-	cursor          int
-	selected        string
-	likeness        int
-	likenessMsg     string
-	correctPassword string
-	unlocked        bool
-	wordCount       int
-	attempts        int
+	GameState *game.State
+	cursor    int
+	unlocked  bool
 }
 
 func InitialModel() *Model {
 	return &Model{
-		choices:         []string{"BROW", "GROW", "NOTE"},
-		selected:        "",
-		correctPassword: "GROW",
-		likeness:        0,
-		likenessMsg:     "",
-		wordCount:       regularModeWordCount,
-		attempts:        allowedAttempts,
+		GameState: game.NormalMode(),
 	}
 }
 
