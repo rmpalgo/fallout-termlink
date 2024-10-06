@@ -16,24 +16,17 @@ const (
 )
 
 type State struct {
-	Choices         []string
-	Likeness        int
-	LikenessMsg     string
-	CorrectPassword string
-	Attempts        int
-	Selected        string
-	WordCount       int
-	Current         gameState
+	Likeness    int
+	LikenessMsg string
+	Attempts    int
+	Current     gameState
 }
 
 func NormalMode() *State {
 	return &State{
-		Choices:         []string{"BROW", "GROW", "NOTE"},
-		Selected:        "",
-		CorrectPassword: "GROW",
-		Likeness:        0,
-		LikenessMsg:     "",
-		Attempts:        allowedAttempts,
-		WordCount:       regularModeWordCount,
+		Likeness:    0,
+		LikenessMsg: "",
+		Attempts:    allowedAttempts,
+		Current:     Main,
 	}
 }

@@ -4,7 +4,22 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/rmpalgo/fallout-termlink/pkg/game"
+)
+
+var (
+	defaultStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#00FF00"))
+
+	cursorStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.AdaptiveColor{Light: "#EE6FF8", Dark: "#00FF00"}).
+			Background(lipgloss.AdaptiveColor{Light: "EE6FF8", Dark: "#005F00"})
+)
+
+const (
+	startingAddrA = "0xFB2A0"
+	startingAddrB = "0xFB2B0"
 )
 
 // View function that renders the UI based on the data model. Simply, this
@@ -12,28 +27,44 @@ import (
 func (m *Model) View() string {
 	switch m.GameState.Current {
 	case game.Main:
-		// Writing the header
-		s := "Welcome to RobCo Industries Termlink.\nPassword Required.\n"
-		s += fmt.Sprintf("Attempts left: %s\n\n", strings.Repeat("▓ ", m.GameState.Attempts))
+		var sb strings.Builder
+		// Welcome message and attempts
+		sb.WriteString(welcomeMsg())
+		sb.WriteRune('\n')
+		sb.WriteString(passwordReqMsg())
+		sb.WriteRune('\n')
+		attemptsMsg(m.GameState.Attempts)
+		sb.WriteRune('\n')
 
-		for i, choice := range m.GameState.Choices {
-			// The cursor will point at the choice
-			cursor := " " // no cursor
-			if m.cursor == i {
-				cursor = ">" // the cursor!
+		// Grid rows and cells
+		for i, row := range m.Grid.Data {
+			// 24 cells
+			cells := len(row)
+			// middle index
+			mid := (cells / 2) - 1
+			// add addressA first then when middle index add addressB
+			sb.WriteString(defaultStyle.Render(fmt.Sprintf("%s%d ", startingAddrA, i)))
+			for j, cell := range row {
+				cellStr := string(cell)
+
+				cursor := m.CursorPosition
+				isCursorPos := (cursor.PosX() == i) && (cursor.PosY() == j)
+
+				if isCursorPos {
+					sb.WriteString(renderCursor(cellStr))
+				} else {
+					sb.WriteString(renderDefault(cellStr))
+				}
+
+				if j == mid {
+					addr := fmt.Sprintf(" %s%d ", startingAddrB, i)
+					sb.WriteString(renderDefault(addr))
+				}
 			}
-
-			s += fmt.Sprintf("%s %s\n", cursor, choice)
-		}
-		s += "\n"
-		if m.GameState.LikenessMsg != "" {
-			s += fmt.Sprintf("> %s", m.GameState.LikenessMsg)
+			sb.WriteRune('\n')
 		}
 
-		s += "\nPress q to quit.\n"
-
-		// Send the UI for rendering
-		return s
+		return sb.String()
 	case game.Unlocked:
 		return "For Overseer Eyes Only!\nClearance Granted.\n"
 	case game.Locked:
@@ -41,4 +72,30 @@ func (m *Model) View() string {
 	}
 
 	return ""
+}
+
+// default text
+func renderDefault(s string) string {
+	return defaultStyle.Render(s)
+}
+
+// cursor highlight
+func renderCursor(s string) string {
+	return cursorStyle.Render(s)
+}
+
+func welcomeMsg() string {
+	title := "Welcome to RobCo Industries Termlink."
+	return renderDefault(title)
+}
+
+func passwordReqMsg() string {
+	msg := "Password Required"
+	return renderDefault(msg)
+}
+
+func attemptsMsg(count int) string {
+	attempts := strings.Repeat("▓ ", count)
+	msg := fmt.Sprintf("Attempts left: %s", attempts)
+	return renderDefault(msg)
 }

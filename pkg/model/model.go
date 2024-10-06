@@ -3,6 +3,7 @@ package model
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/rmpalgo/fallout-termlink/pkg/game"
+	"github.com/rmpalgo/fallout-termlink/pkg/grid"
 )
 
 // Model the state of the application. Working with
@@ -14,14 +15,18 @@ import (
 // Update() handles incoming commands and updates the model state accordingly.
 // View()   rendering method for the TUI.
 type Model struct {
-	GameState *game.State
-	cursor    int
-	unlocked  bool
+	GameState      *game.State
+	Grid           *grid.Grid
+	CursorPosition *grid.Position
+
+	unlocked bool
 }
 
 func InitialModel() *Model {
 	return &Model{
-		GameState: game.NormalMode(),
+		GameState:      game.NormalMode(),
+		Grid:           grid.NormalMode(),
+		CursorPosition: grid.NewPosition(),
 	}
 }
 
