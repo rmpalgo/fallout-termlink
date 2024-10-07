@@ -18,7 +18,8 @@ type Grid struct {
 	Regions []Region
 	// Use memoization to track region with placed words to avoid
 	// multiple words placed in the same region.
-	UsedRegions map[int]map[Region]bool
+	UsedRegions     map[int]map[Region]bool
+	CorrectPassword string
 }
 
 type Region struct {
@@ -43,6 +44,10 @@ func NormalMode() *Grid {
 	}
 	g.initializeGrid()
 	g.placeWords()
+
+	if len(g.Words) > 0 {
+		g.CorrectPassword = g.Words[rand.Intn(len(g.Words))].Text
+	}
 	return g
 }
 

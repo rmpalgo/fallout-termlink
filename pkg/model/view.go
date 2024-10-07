@@ -34,7 +34,10 @@ func (m *Model) View() string {
 		sb.WriteRune('\n')
 		sb.WriteString(passwordReqMsg())
 		sb.WriteRune('\n')
-		attemptsMsg(m.GameState.Attempts)
+		sb.WriteString(renderDefault(fmt.Sprintf("Correct Password: %s", m.Grid.CorrectPassword)))
+		sb.WriteRune('\n')
+		sb.WriteString(attemptsMsg(m.GameState.Attempts))
+		sb.WriteRune('\n')
 		sb.WriteRune('\n')
 
 		// Determine if the cursor is over a word or a special sequence
@@ -86,14 +89,20 @@ func (m *Model) View() string {
 					sb.WriteString(renderDefault(addr))
 				}
 			}
-			sb.WriteRune('\n')
+
+			if i != len(m.Grid.Data)-1 {
+				sb.WriteRune('\n')
+			} else {
+				sb.WriteString(renderDefault(fmt.Sprintf(" > %s", m.GameState.LikenessMsg)))
+				sb.WriteRune('\n')
+			}
 		}
 
 		return sb.String()
 	case game.Unlocked:
-		return "For Overseer Eyes Only!\nClearance Granted.\n"
+		return renderDefault("For Overseer Eyes Only!\nClearance Granted.\n")
 	case game.Locked:
-		return "TERMINAL LOCKED\nPlease Contact an Administrator!"
+		return renderDefault("TERMINAL LOCKED\nPlease Contact an Administrator!")
 	}
 
 	return ""

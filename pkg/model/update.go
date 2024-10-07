@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/rmpalgo/fallout-termlink/pkg/game"
 )
@@ -32,7 +34,28 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Enter and space press is to enter the selection where the
 			// cursor is currently positioned.
 			case "enter":
+				pos := m.CursorPosition
 
+				// Check if the position is part of a word
+				if word, exists := m.Grid.PositionToWord[pos]; exists && !word.Found {
+					if word.Text == m.Grid.CorrectPassword {
+						m.unlocked = true
+						m.GameState.Current = game.Unlocked
+						m.GameState.LikenessMsg = fmt.Sprintf("Found Password: %s", word.Text)
+						return m, nil
+					}
+
+					total := calculateLikeness(word.Text, m.Grid.CorrectPassword)
+					m.GameState.Likeness = total
+					m.GameState.Attempts--
+					m.GameState.LikenessMsg = fmt.Sprintf("Likeness: %d", total)
+				}
+
+				if m.GameState.Attempts == 0 {
+					m.GameState.Current = game.Locked
+				}
+
+				return m, nil
 			}
 		}
 	default:
