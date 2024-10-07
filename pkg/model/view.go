@@ -59,10 +59,11 @@ func (m *Model) View() string {
 		// Render the grid
 		for i, row := range m.Grid.Data {
 			cells := len(row)
-			mid := (cells / 2) - 1 // Middle index for AddressB
+			// Middle index for AddressB
+			mid := (cells / 2) - 1
 
 			// Render AddressA with row number
-			sb.WriteString(defaultStyle.Render(fmt.Sprintf("%s%02d ", startingAddrA, i)))
+			sb.WriteString(defaultStyle.Render(fmt.Sprintf("%s%d ", startingAddrA, i)))
 
 			for j, cell := range row {
 				pos := grid.Position{Row: i, Col: j}
@@ -85,15 +86,30 @@ func (m *Model) View() string {
 
 				// Insert AddressB at the middle of the row
 				if j == mid {
-					addr := fmt.Sprintf(" %s%02d ", startingAddrB, i)
+					addr := fmt.Sprintf(" %s%d ", startingAddrB, i)
 					sb.WriteString(renderDefault(addr))
 				}
 			}
 
+			// Add newline except for the last row
 			if i != len(m.Grid.Data)-1 {
 				sb.WriteRune('\n')
-			} else {
-				sb.WriteString(renderDefault(fmt.Sprintf(" > %s", m.GameState.LikenessMsg)))
+			}
+		}
+
+		// Display the cursor information to the bottom of the grid for now
+		sb.WriteRune('\n')
+		if wordToHighlight != nil {
+			sb.WriteString(renderDefault(fmt.Sprintf("> %s", wordToHighlight.Text)))
+		} else {
+			currentChar := string(m.Grid.Data[m.CursorPosition.Row][m.CursorPosition.Col])
+			sb.WriteString(renderDefault(fmt.Sprintf("> %s", currentChar)))
+		}
+		sb.WriteRune('\n')
+
+		if len(m.GameState.LikenessMsg) != 0 {
+			for _, msg := range m.GameState.LikenessMsg {
+				sb.WriteString(renderDefault(msg))
 				sb.WriteRune('\n')
 			}
 		}

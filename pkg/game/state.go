@@ -17,7 +17,7 @@ const (
 
 type State struct {
 	Likeness    int
-	LikenessMsg string
+	LikenessMsg []string
 	Attempts    int
 	Current     gameState
 }
@@ -25,7 +25,7 @@ type State struct {
 func NormalMode() *State {
 	return &State{
 		Likeness:    0,
-		LikenessMsg: "",
+		LikenessMsg: make([]string, 0),
 		Attempts:    allowedAttempts,
 		Current:     Main,
 	}

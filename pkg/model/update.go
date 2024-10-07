@@ -41,14 +41,14 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if word.Text == m.Grid.CorrectPassword {
 						m.unlocked = true
 						m.GameState.Current = game.Unlocked
-						m.GameState.LikenessMsg = fmt.Sprintf("Found Password: %s", word.Text)
+						m.GameState.LikenessMsg = append(m.GameState.LikenessMsg, fmt.Sprintf("Found Password: %s", word.Text))
 						return m, nil
 					}
 
 					total := calculateLikeness(word.Text, m.Grid.CorrectPassword)
 					m.GameState.Likeness = total
 					m.GameState.Attempts--
-					m.GameState.LikenessMsg = fmt.Sprintf("Likeness: %d", total)
+					m.GameState.LikenessMsg = append(m.GameState.LikenessMsg, fmt.Sprintf("Likeness: %d", total))
 				}
 
 				if m.GameState.Attempts == 0 {
