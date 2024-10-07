@@ -1,11 +1,6 @@
 package game
 
-const (
-	regularModeWordCount = 4
-	hardModeWordCount    = 5
-
-	allowedAttempts = 4
-)
+const allowedAttempts = 4
 
 type gameState int
 
