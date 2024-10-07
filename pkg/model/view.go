@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/rmpalgo/fallout-termlink/pkg/game"
+	"github.com/rmpalgo/fallout-termlink/pkg/grid"
 )
 
 var (
@@ -36,28 +37,52 @@ func (m *Model) View() string {
 		attemptsMsg(m.GameState.Attempts)
 		sb.WriteRune('\n')
 
-		// Grid rows and cells
+		// Determine if the cursor is over a word or a special sequence
+		var wordToHighlight *grid.Word
+		if word, exists := m.Grid.PositionToWord[m.CursorPosition]; exists && !word.Found {
+			wordToHighlight = word
+		}
+
+		// Determine positions to highlight
+		highlightPositions := make(map[grid.Position]bool)
+		if wordToHighlight != nil {
+			for _, pos := range wordToHighlight.Positions {
+				highlightPositions[pos] = true
+			}
+		} else {
+			highlightPositions[m.CursorPosition] = true
+		}
+
+		// Render the grid
 		for i, row := range m.Grid.Data {
-			// 24 cells
 			cells := len(row)
-			// middle index
-			mid := (cells / 2) - 1
-			// add addressA first then when middle index add addressB
-			sb.WriteString(defaultStyle.Render(fmt.Sprintf("%s%d ", startingAddrA, i)))
+			mid := (cells / 2) - 1 // Middle index for AddressB
+
+			// Render AddressA with row number
+			sb.WriteString(defaultStyle.Render(fmt.Sprintf("%s%02d ", startingAddrA, i)))
+
 			for j, cell := range row {
+				pos := grid.Position{Row: i, Col: j}
 				cellStr := string(cell)
 
-				cursor := m.CursorPosition
-				isCursorPos := (cursor.PosX() == i) && (cursor.PosY() == j)
-
-				if isCursorPos {
-					sb.WriteString(renderCursor(cellStr))
+				// Apply styles based on the position
+				if highlightPositions[pos] {
+					if wordToHighlight != nil {
+						// Apply wordStyle to entire word
+						cellStr = renderCursor(cellStr)
+					} else {
+						// Apply cursorStyle to single character
+						cellStr = renderCursor(cellStr)
+					}
 				} else {
-					sb.WriteString(renderDefault(cellStr))
+					cellStr = renderDefault(cellStr)
 				}
 
+				sb.WriteString(cellStr)
+
+				// Insert AddressB at the middle of the row
 				if j == mid {
-					addr := fmt.Sprintf(" %s%d ", startingAddrB, i)
+					addr := fmt.Sprintf(" %s%02d ", startingAddrB, i)
 					sb.WriteString(renderDefault(addr))
 				}
 			}

@@ -17,7 +17,7 @@ import (
 type Model struct {
 	GameState      *game.State
 	Grid           *grid.Grid
-	CursorPosition *grid.Position
+	CursorPosition grid.Position
 
 	unlocked bool
 }

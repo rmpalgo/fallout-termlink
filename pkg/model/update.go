@@ -46,24 +46,37 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *Model) moveUp() {
 	if m.CursorPosition.Row > 0 {
-		m.CursorPosition.MoveUp()
+		m.CursorPosition.Row--
 	}
 }
 
 func (m *Model) moveDown() {
 	if m.CursorPosition.Row < len(m.Grid.Data)-1 {
-		m.CursorPosition.MoveDown()
+		m.CursorPosition.Row++
 	}
 }
 
 func (m *Model) moveLeft() {
 	if m.CursorPosition.Col > 0 {
+		if word, exists := m.Grid.PositionToWord[m.CursorPosition]; exists {
+			// When cursor is on a word, then skip to next single character.
+			endPos := word.Positions[len(word.Positions)-1].Col
+			m.CursorPosition.Col = endPos - len(word.Text)
+			return
+		}
 		m.CursorPosition.Col--
 	}
 }
 
 func (m *Model) moveRight() {
 	if m.CursorPosition.Col < len(m.Grid.Data[0])-1 {
+		if word, exists := m.Grid.PositionToWord[m.CursorPosition]; exists {
+			// When cursor is on a word, then skip over to
+			// next single character.
+			startPos := word.Positions[0].Col
+			m.CursorPosition.Col = startPos + len(word.Text)
+			return
+		}
 		m.CursorPosition.Col++
 	}
 }
