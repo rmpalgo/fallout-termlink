@@ -22,13 +22,13 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Pressing q or ctrl+c will exit the program.
 			case "ctrl+c", "q":
 				return m, tea.Quit
-			case "up":
+			case "up", "w":
 				m.moveUp()
-			case "down":
+			case "down", "s":
 				m.moveDown()
-			case "left":
+			case "left", "d":
 				m.moveLeft()
-			case "right":
+			case "right", "a":
 				m.moveRight()
 
 			// Enter and space press is to enter the selection where the
