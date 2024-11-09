@@ -26,9 +26,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.moveUp()
 			case "down", "s":
 				m.moveDown()
-			case "left", "d":
+			case "left", "a":
 				m.moveLeft()
-			case "right", "a":
+			case "right", "d":
 				m.moveRight()
 
 			// Enter and space press is to enter the selection where the
