@@ -16,7 +16,7 @@
 ### 
 <em>Disclaimer: This project is not affiliated with the Fallout game series, Zenimax, or Bethesda. - Please contact me [here](mailto:ronnelpalencia@proton.com) if there are any issues.</em>
 
-![app demo](./docs/demo_wip.gif)
+<img src="./docs/demo_wip.gif" width="250" height="250"/>
 
 ## Installation
 
