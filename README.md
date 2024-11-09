@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/rmpalgo/fallout-termlink/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rmpalgo/fallout-termlink.svg?style=flat" alt="License Status"></a>
+  <a href="https://github.com/rmpalgo/fallout-termlink/blob/main/LICENSE"><img src=https://img.shields.io/github/license/rmpalgo/fallout-termlink
+ alt="License Status"></a>
 </p>
 
 ### 
